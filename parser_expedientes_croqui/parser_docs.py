@@ -1,9 +1,21 @@
 import docx
 import os
-from crawler_arquivos import crawler_arquivos_tipo
 import subprocess
 import pandas as pd
 import pickle
+from pathlib import PurePath
+
+def crawler_arquivos_tipo(extension, dir_ = os.getcwd()):
+    '''Percorre uma árvore de diretórios e obtém os 
+    paths absolutos de todos os arquivos de uma determinada extensão'''
+    #Essa função está fora da classe porque ela pertence a uma outra classe que abstrai diversas funções de parseamento de arquivos.
+    #Coloquei ela aqui por comodidade, para não ter que realizar o import
+    
+    paths = [(tupla[0], tupla[2]) for tupla in list(os.walk(dir_))]
+    path_files = [os.path.abspath(os.path.join(tupla[0], file)) for tupla in paths for file in tupla[1]]
+    files = [path for path in path_files if os.path.isfile(path) and extension == PurePath(path).suffix]
+    
+    return files
 
 class ParserDocx():
     '''Implementa o pipeline de conversão de parseamento dos arquivos .doc que contém
